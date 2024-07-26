@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Rendimiento de Alumnos</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 400px;
+            box-sizing: border-box;
+            margin: 20px auto; /* Centra el contenedor en la página */
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group {
+            width: 100%;
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+
+        input[type="submit"],
+        button {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        input[type="submit"] {
+            background-color: #5cb85c;
+            color: white;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #4cae4c;
+        }
+
+        button {
+            background-color: #d9534f;
+            color: white;
+        }
+
+        button:hover {
+            background-color: #c9302c;
+        }
+
+        p {
+            color: #333;
+            font-weight: bold;
+            text-align: center;
+        }
+    </style>
+    <script>
+        function predecirRendimiento(event) {
+            event.preventDefault();
+            const materia1 = document.getElementById('materia1').value;
+            const materia2 = document.getElementById('materia2').value;
+            const materia3 = document.getElementById('materia3').value;
+            const materia4 = document.getElementById('materia4').value;
+            const materia5 = document.getElementById('materia5').value;
+            const materia6 = document.getElementById('materia6').value;
+            const materia7 = document.getElementById('materia7').value;
+            const materia8 = document.getElementById('materia8').value;
+            
+            
+
+            fetch('/predict', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `materia1=${materia1}&materia2=${materia2}&materia3=${materia3}&materia4=${materia4}&materia5=${materia5}&materia6=${materia6}&materia7=${materia7}&materia8=${materia8}`,
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    document.getElementById('resultado').innerText = 'Error: ' + data.error;
+                } else {
+                    document.getElementById('resultado').innerText = 'La predicción dicta ' + data.categoria;
+                    document.getElementById('prom').innerText = data.prom;
+                }
+            })
+            .catch(error => {
+                document.getElementById('resultado').innerText = 'Error en la solicitud.';
+                console.error('Error:', error);
+            });
+        }
+
+        function limpiarFormulario() {
+            document.getElementById('formulario').reset();
+            document.getElementById('resultado').innerText = '';
+        }
+    </script>
+</head>
+<body>
+    <h1>SIGA - ESGHAR</h1>
+    <div class="container">
+        <h1>Rendimiento de Alumnos</h1>
+        <form id="formulario" onsubmit="predecirRendimiento(event)">
+            <div class="form-group">
+                <label for="materia1">ESPAÑOL:</label>
+                <input type="text" id="materia1" name="materia1">
+            </div>
+            <div class="form-group">
+                <label for="materia">MATEMATICAS:</label>
+                <input type="text" id="materia2" name="materia2">
+            </div>
+            <div class="form-group">
+                <label for="materia">INGLES:</label>
+                <input type="text" id="materia3" name="materia3">
+            </div>
+            <div class="form-group">
+                <label for="materia">CIENCIAS NATURALES:</label>
+                <input type="text" id="materia4" name="materia4">
+            </div>
+            <div class="form-group">
+                <label for="materia">HISTORIA:</label>
+                <input type="text" id="materia5" name="materia5">
+            </div>
+            <div class="form-group">
+                <label for="materia">EDUCACION FISICA:</label>
+                <input type="text" id="materia6" name="materia6">
+            </div>
+            <div class="form-group">
+                <label for="materia">ARTES:</label>
+                <input type="text" id="materia7" name="materia7">
+            </div>
+            <div class="form-group">
+                <label for="materia">TECNOLOGIA:</label>
+                <input type="text" id="materia8" name="materia8">
+            </div>            
+            <div class="form-group">
+                <label>PROMEDIO:</label>
+                <p id="prom"></p>
+            </div> 
+            
+            <input type="submit" value="Enviar">
+            <button type="button" onclick="limpiarFormulario()">Limpiar</button>
+        </form>
+        <p id="resultado"></p>
+    </div>
+</body>
+</html>
